@@ -11,14 +11,12 @@
       padding: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-
     body {
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      /* Purple-Green Theme */
       background: linear-gradient(135deg, #4b0082, #008080, #2e8b57);
       color: #7fffd4;
       transition: background 0.2s ease;
@@ -26,12 +24,9 @@
     body.blackout {
       background: #000000 !important;
     }
-
-    body.blackout #display,
-    body.blackout #startStopBtn {
+    body.blackout #display {
       visibility: hidden;
     }
-
     #display {
       font-size: 5rem;
       font-weight: bold;
@@ -40,13 +35,11 @@
       text-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
       user-select: none;
     }
-
     .controls {
       display: flex;
       align-items: center;
       gap: 20px;
     }
-
     button {
       border: none;
       border-radius: 8px;
@@ -54,24 +47,9 @@
       font-weight: bold;
       transition: transform 0.1s ease, opacity 0.2s ease;
     }
-
     button:active {
       transform: scale(0.95);
     }
-    #startStopBtn {
-      padding: 15px 30px;
-      font-size: 1.2rem;
-      background-color: #00fa9a;
-      color: #2e0854;
-    }
-
-    #resetBtn {
-      padding: 14px 28px;
-      font-size: 1.1rem;
-      background-color: #9370db;
-      color: #ffffff;
-    }
-
     #stealthBtn {
       padding: 8px 14px;
       font-size: 0.85rem;
@@ -79,7 +57,12 @@
       color: #00fa9a;
       border: 1px solid #00fa9a;
     }
-
+    #resetBtn {
+      padding: 14px 28px;
+      font-size: 1.1rem;
+      background-color: #9370db;
+      color: #ffffff;
+    }
     body.blackout #resetBtn,
     body.blackout #stealthBtn {
       background-color: #0a0a0a;
@@ -89,26 +72,16 @@
   </style>
 </head>
 <body>
-
   <div id="display">00:00.00</div>
-
   <div class="controls">
-    <button id="startStopBtn">Start</button>
     <button id="stealthBtn">Hide</button>
     <button id="resetBtn">Reset</button>
   </div>
-
   <script>
-    let startTime = 0;
-    let elapsedTime = 0;
-    let timerInterval = null;
-    let isRunning = false;
-
+    let startTime = Date.now();
     const display = document.getElementById('display');
-    const startStopBtn = document.getElementById('startStopBtn');
     const stealthBtn = document.getElementById('stealthBtn');
     const resetBtn = document.getElementById('resetBtn');
-
     function formatTime(ms) {
       const totalCentiseconds = Math.floor(ms / 10);
       const centiseconds = String(totalCentiseconds % 100).padStart(2, '0');
@@ -117,37 +90,18 @@
       const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
       return `${minutes}:${seconds}.${centiseconds}`;
     }
-
     function updateDisplay() {
-      elapsedTime = Date.now() - startTime;
+      const elapsedTime = Date.now() - startTime;
       display.textContent = formatTime(elapsedTime);
     }
-
-    startStopBtn.addEventListener('click', () => {
-      if (!isRunning) {
-        startTime = Date.now() - elapsedTime;
-        timerInterval = setInterval(updateDisplay, 10);
-        startStopBtn.textContent = 'Pause';
-        isRunning = true;
-      } else {
-        clearInterval(timerInterval);
-        startStopBtn.textContent = 'Start';
-        isRunning = false;
-      }
-    });
-
+    setInterval(updateDisplay, 10);
     stealthBtn.addEventListener('click', () => {
       document.body.classList.toggle('blackout');
     });
-
     resetBtn.addEventListener('click', () => {
-      clearInterval(timerInterval);
-      isRunning = false;
-      elapsedTime = 0;
+      startTime = Date.now();
       display.textContent = '00:00.00';
-      startStopBtn.textContent = 'Start';
     });
   </script>
-
 </body>
 </html>
